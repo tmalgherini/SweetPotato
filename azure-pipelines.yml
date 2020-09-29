@@ -30,7 +30,7 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: 'D:\a\1\s\SweetPotato\bin\Release\SweetPotato.exe'
-    ArtifactName: 'SharpUp.exe'
+    ArtifactName: 'SweetPotato.exe'
     publishLocation: 'Container'
     
 - task: PowerShell@2
