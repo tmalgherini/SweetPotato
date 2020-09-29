@@ -1,0 +1,75 @@
+# .NET Desktop
+# Build and run tests for .NET Desktop or Windows classic desktop solutions.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/apps/windows/dot-net
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+  variables:
+    solution: '**/*.sln'
+      buildPlatform: 'Any CPU'
+        buildConfiguration: 'Release'
+
+        steps:
+        - task: NuGetToolInstaller@1
+
+        - task: NuGetCommand@2
+          inputs:
+              restoreSolution: '$(solution)'
+
+              - task: VSBuild@1
+                inputs:
+                    solution: '$(solution)'
+                        platform: '$(buildPlatform)'
+                            configuration: '$(buildConfiguration)'
+
+                            - task: PublishBuildArtifacts@1
+                              inputs:
+                                  PathtoPublish: 'D:\a\1\s\SharpUp\bin\Release\SharpUp.exe'
+                                      ArtifactName: 'SharpUp.exe'
+                                          publishLocation: 'Container'
+                                              
+                                              - task: PowerShell@2
+                                                name: ConfuserExSetup
+                                                  inputs:
+                                                      targetType: 'inline'
+                                                          script: |
+                                                                $(New-Object System.Net.WebClient).DownloadFile("https://github.com/yck1509/ConfuserEx/releases/download/v1.0.0/ConfuserEx_bin.zip", "confuserex.zip")
+                                                                      pwd
+                                                                            Expand-Archive -Path confuserex.zip -DestinationPath confuserex
+                                                                                  @"
+                                                                                        <project outputDir=".\confused" baseDir="." xmlns="http://confuser.codeplex.com">
+                                                                                              <rule pattern="true" preset="aggressive">
+                                                                                                    <protection id="anti ildasm" />
+                                                                                                          <protection id="rename" />
+                                                                                                                <protection id="resources" /> 
+                                                                                                                      <protection id="invalid metadata" />
+                                                                                                                            <protection id="anti debug" />
+                                                                                                                                  <!-- <protection id="anti dump" /> -->
+                                                                                                                                        <protection id="ctrl flow" />
+                                                                                                                                              <protection id="constants" />
+                                                                                                                                                    <!-- <protection id="anti tamper" /> -->
+                                                                                                                                                          </rule>
+                                                                                                                                                                <module path="D:\a\1\s\SharpUp\bin\Release\SharpUp.exe"/>
+                                                                                                                                                                      </project>
+                                                                                                                                                                            "@|Out-File -FilePath confuserex.crproj
+                                                                                                                                                                                  mkdir confused
+                                                                                                                                                                                        
+                                                                                                                                                                                        - task: CmdLine@2
+                                                                                                                                                                                          name: ConfuserExRun
+                                                                                                                                                                                            inputs:
+                                                                                                                                                                                                script: |
+                                                                                                                                                                                                        dir
+                                                                                                                                                                                                                confuserex\Confuser.CLI.exe confuserex.crproj
+
+                                                                                                                                                                                                                - task: AzureFileCopy@3
+                                                                                                                                                                                                                  name: UploadFile
+                                                                                                                                                                                                                    inputs:
+                                                                                                                                                                                                                        SourcePath: 'D:\a\1\s\confused\SharpUp\bin\Release\SharpUp.exe'
+                                                                                                                                                                                                                            azureSubscription: $(SubName)
+                                                                                                                                                                                                                                Destination: 'AzureBlob'
+                                                                                                                                                                                                                                
