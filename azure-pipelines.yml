@@ -29,7 +29,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: 'D:\a\1\s\SweetPotato\bin\Release\SweetPotato.exe'
+    PathtoPublish: 'D:\a\1\s\bin\Release\SweetPotato.exe'
     ArtifactName: 'SweetPotato.exe'
     publishLocation: 'Container'
     
@@ -54,7 +54,7 @@ steps:
       <protection id="constants" />
       <!-- <protection id="anti tamper" /> -->
       </rule>
-      <module path="D:\a\1\s\SweetPotato\bin\Release\SweetPotato.exe"/>
+      <module path="D:\a\1\s\bin\Release\SweetPotato.exe"/>
       </project>
       "@|Out-File -FilePath confuserex.crproj
       mkdir confused
@@ -69,7 +69,7 @@ steps:
 - task: AzureFileCopy@3
   name: UploadFile
   inputs:
-    SourcePath: 'D:\a\1\s\confused\SharpUp\bin\Release\SweetPotato.exe'
+    SourcePath: 'D:\a\1\s\confused\bin\Release\SweetPotato.exe'
     azureSubscription: $(SubName)
     Destination: 'AzureBlob'
     storage: $(StorageAccount)
