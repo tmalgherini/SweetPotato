@@ -57,6 +57,7 @@ steps:
       <module path="D:\a\1\s\bin\Release\SweetPotato.exe"/>
       </project>
       "@|Out-File -FilePath confuserex.crproj
+      Copy-Item -Path D:\a\1\s\NtApiDotNet\bin\Release\NtApiDotNet.dll -Destination D:\a\1\s\bin\Release\NtApiDotNet.dll
       mkdir confused
       
 - task: CmdLine@2
